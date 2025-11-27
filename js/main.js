@@ -51,11 +51,11 @@ const getRandomCount = (min, max) => {
   return Math.floor(result);
 };
 
-const createUniqIdSeq = () => {
+const createUniqIdSeq = (minId, maxId) => {
   const ids = [];
 
   return () => {
-    const getId = () => getRandomCount(PHOTOS_COUNT + 1, PHOTOS_COUNT * MAX_COMMENTS_COUNT);
+    const getId = () => getRandomCount(minId, maxId);
     let newId = getId();
 
     while (ids.includes(newId)) {
@@ -67,20 +67,25 @@ const createUniqIdSeq = () => {
   };
 };
 
-const getUniqId = createUniqIdSeq();
-
 const createComment = (id) => {
   const messagesCount = getRandomCount(1, 2);
+  const getUniqIndex = createUniqIdSeq(0, MESSAGES.length - 1);
 
-  // Тут доделать
+  const message = [MESSAGES[getUniqIndex()]];
+
+  if (messagesCount === 2) {
+    message.push(MESSAGES[getUniqIndex()]);
+  }
 
   return {
     id,
     avatar: `img/avatar-${getRandomCount(AVATAR_MIN_ID, AVATAR_MAX_ID)}.svg`,
-    message: MESSAGES[getRandomCount(0, MESSAGES.length - 1)],
+    message: message.join(' '),
     name: NAMES[getRandomCount(0, NAMES.length - 1)]
   };
 };
+
+const getUniqId = createUniqIdSeq(PHOTOS_COUNT + 1, PHOTOS_COUNT * MAX_COMMENTS_COUNT);
 
 const createPhoto = (id) => {
   const likesCount = getRandomCount(MIN_LIKES_COUNT, MAX_LIKES_COUNT);
