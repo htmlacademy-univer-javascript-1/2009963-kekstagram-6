@@ -5,11 +5,11 @@ const getRandomCount = (min, max) => {
   return Math.floor(result);
 };
 
-const createIdSeq = (minId) => {
+const createIdGenerator = (minId) => {
   let lastId = minId;
 
   return () => lastId++;
 };
 
 
-export { getRandomCount, createIdSeq };
+export { getRandomCount, createIdGenerator };

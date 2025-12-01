@@ -1,50 +1,16 @@
-import { getRandomCount, createIdSeq } from './utils.js';
-
-const PHOTOS_COUNT = 25;
-
-const MIN_LIKES_COUNT = 15;
-const MAX_LIKES_COUNT = 200;
-
-const MIN_COMMENTS_COUNT = 0;
-const MAX_COMMENTS_COUNT = 30;
-
-const AVATAR_MIN_ID = 1;
-const AVATAR_MAX_ID = 6;
-
-
-const DESCRIPTIONS = [
-  'Первое описание',
-  'Второе описание',
-  'Третье описание',
-  'Четвертое описание',
-  'Пятое описание',
-  'Шестое описание',
-  'Седьмое описание',
-  'Восьмое описание',
-  'Девятое описание'
-];
-
-const NAMES = [
-  'Чарли',
-  'Горячий Брауни',
-  'Томпсонск',
-  'Барлай',
-  'Уоллес',
-  'Громмит',
-  'Ванюшка',
-  'Тренквор',
-  'Дорнав',
-];
-
-const MESSAGES = [
-  'Всё отлично!',
-  'В целом всё неплохо. Но не всё.',
-  'Когда вы делаете фотографию, хорошо бы убирать палец из кадра.',
-  'В конце концов это просто непрофессионально.',
-  'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
-  'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
-  'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
-];
+import { getRandomCount, createIdGenerator } from './utils.js';
+import {
+  PHOTOS_COUNT,
+  MIN_LIKES_COUNT,
+  MAX_LIKES_COUNT,
+  MIN_COMMENTS_COUNT,
+  MAX_COMMENTS_COUNT,
+  AVATAR_MIN_ID,
+  AVATAR_MAX_ID,
+  DESCRIPTIONS,
+  NAMES,
+  MESSAGES
+} from './constants.js';
 
 const createMessage = (messagesCount) => {
   const getIndex = () => getRandomCount(0, MESSAGES.length - 1);
@@ -89,8 +55,8 @@ const createPhoto = (photoId, createUniqCommentId) => {
 };
 
 const createPhotos = () => {
-  const createId = createIdSeq(PHOTOS_COUNT + 1);
-  return Array.from({length: PHOTOS_COUNT}, (item, index) => createPhoto(index + 1, createId));
+  const generateId = createIdGenerator(PHOTOS_COUNT + 1);
+  return Array.from({length: PHOTOS_COUNT}, (item, index) => createPhoto(index + 1, generateId));
 };
 
 export { createPhotos };
