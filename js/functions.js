@@ -14,3 +14,9 @@ const getCounts = (input) => {
   });
   return parseInt(result.join(''), 10);
 };
+
+export {
+  isStringShort,
+  isPalindrome,
+  getCounts
+};
