@@ -30,5 +30,5 @@ export {
   isStringShort,
   isPalindrome,
   getCounts,
-  isWorkTime
+  isWorkTime,
 };

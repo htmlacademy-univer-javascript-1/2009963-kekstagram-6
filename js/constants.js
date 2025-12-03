@@ -54,5 +54,5 @@ export {
   AVATAR_MAX_ID,
   DESCRIPTIONS,
   NAMES,
-  MESSAGES
+  MESSAGES,
 };

@@ -9,7 +9,7 @@ import {
   AVATAR_MAX_ID,
   DESCRIPTIONS,
   NAMES,
-  MESSAGES
+  MESSAGES,
 } from './constants.js';
 
 const createMessage = (messagesCount) => {
