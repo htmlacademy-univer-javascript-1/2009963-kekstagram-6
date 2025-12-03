@@ -54,9 +54,9 @@ const createPhoto = (photoId, createUniqCommentId) => {
   return result;
 };
 
-const createPhotos = () => {
+const createPhotosData = () => {
   const generateId = createIdGenerator(PHOTOS_COUNT + 1);
   return Array.from({length: PHOTOS_COUNT}, (item, index) => createPhoto(index + 1, generateId));
 };
 
-export { createPhotos };
+export { createPhotosData };
