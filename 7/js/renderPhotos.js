@@ -7,9 +7,11 @@ const renderPhotos = (data) => {
 
   const photosListFragment = document.createDocumentFragment();
 
-  data.forEach(({ url, likes, comments }) => {
+  data.forEach(({ url, description, likes, comments }) => {
     const photoEl = photoTemplate.cloneNode(true);
-    photoEl.querySelector('.picture__img').src = url;
+    const imgElem = photoEl.querySelector('.picture__img');
+    imgElem.src = url;
+    imgElem.alt = description;
     photoEl.querySelector('.picture__comments').textContent = comments.length;
     photoEl.querySelector('.picture__likes').textContent = likes;
 
