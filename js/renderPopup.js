@@ -1,3 +1,5 @@
+import { COMMENTS_COUNT_OFFSET } from './constants.js';
+
 const renderComment = ({ avatar, message, name }) => {
   const li = document.createElement('li');
   li.classList.add('social__comment');
@@ -19,15 +21,16 @@ const renderComment = ({ avatar, message, name }) => {
   return li;
 };
 
-const renderComments = (comments) => {
+const renderComments = (comments, currentIndex, offset) => {
   const commentsListFragment = document.createDocumentFragment();
-
-  comments.forEach((comment) => {
-    const commentElem = renderComment(comment);
-    commentsListFragment.appendChild(commentElem);
-  });
-
-  return commentsListFragment;
+  comments
+    .slice(currentIndex, currentIndex += offset)
+    .forEach((comment) => {
+      const commentElem = renderComment(comment);
+      commentsListFragment.appendChild(commentElem);
+    });
+  currentIndex += offset;
+  return { commentsListFragment, currentIndex };
 };
 
 const renderPopup = ({ url, description, likes, comments }) => {
@@ -35,25 +38,36 @@ const renderPopup = ({ url, description, likes, comments }) => {
   body.classList.add('modal-open');
 
   const modalElem = document.querySelector('.big-picture');
-
   modalElem.classList.remove('hidden');
-
-  modalElem.querySelector('.social__comment-count').classList.toggle('hidden');
-  modalElem.querySelector('.comments-loader').classList.toggle('hidden');
 
   const imgElem = document.querySelector('.big-picture__img img');
   imgElem.src = url;
   imgElem.alt = description;
 
-  document.querySelector('.social__caption').textContent = description;
+  modalElem.querySelector('.social__caption').textContent = description;
+  modalElem.querySelector('.likes-count').textContent = likes;
 
-  document.querySelector('.likes-count').textContent = likes;
+  const currentCommentsCountElem = document.querySelector('.comments-current-count');
   document.querySelector('.comments-count').textContent = comments.length;
 
-  const commentsUl = document.querySelector('.social__comments');
-  const commentsItems = renderComments(comments);
+  const commentsListEl = modalElem.querySelector('.social__comments');
+  commentsListEl.innerHTML = '';
 
-  commentsUl.replaceChildren(commentsItems);
+  let currentIndex = 0;
+  const {
+    commentsListFragment: commentsListItems,
+    currentIndex: currentRenderedCommentsCount,
+  } = renderComments(comments, currentIndex, COMMENTS_COUNT_OFFSET);
+  currentIndex = currentRenderedCommentsCount;
+
+  currentCommentsCountElem.textContent = currentRenderedCommentsCount;
+  commentsListEl.appendChild(commentsListItems);
+
+  const commentsLoader = modalElem.querySelector('.comments-loader');
+  commentsLoader.addEventListener('click', (event) => {
+    event.preventDefault();
+    renderComments(comments);
+  });
 
   const closeButton = document.querySelector('.big-picture__cancel');
 

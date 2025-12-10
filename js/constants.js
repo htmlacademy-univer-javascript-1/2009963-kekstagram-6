@@ -9,6 +9,8 @@ const MAX_COMMENTS_COUNT = 30;
 const AVATAR_MIN_ID = 1;
 const AVATAR_MAX_ID = 6;
 
+const COMMENTS_COUNT_OFFSET = 5;
+
 
 const DESCRIPTIONS = [
   'Первое описание',
@@ -52,6 +54,7 @@ export {
   MAX_COMMENTS_COUNT,
   AVATAR_MIN_ID,
   AVATAR_MAX_ID,
+  COMMENTS_COUNT_OFFSET,
   DESCRIPTIONS,
   NAMES,
   MESSAGES,
