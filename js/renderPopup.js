@@ -1,4 +1,4 @@
-import { COMMENTS_COUNT_OFFSET } from './constants.js';
+import { COMMENTS_COUNT_SHIFT } from './constants.js';
 
 const renderComment = ({ avatar, message, name }) => {
   const li = document.createElement('li');
@@ -21,21 +21,33 @@ const renderComment = ({ avatar, message, name }) => {
   return li;
 };
 
-const renderComments = (comments, currentIndex, offset) => {
-  const commentsListFragment = document.createDocumentFragment();
-  comments
-    .slice(currentIndex, currentIndex += offset)
-    .forEach((comment) => {
-      const commentElem = renderComment(comment);
-      commentsListFragment.appendChild(commentElem);
-    });
-  currentIndex += offset;
-  return { commentsListFragment, currentIndex };
+const createCommentRenderer = (beginIndex, shift) => {
+  let currentIndex = beginIndex;
+
+  return (comments, parentNode) => {
+    const currentCommentsCountElem = document.querySelector('.comments-current-count');
+    const commentsListFragment = document.createDocumentFragment();
+
+    const newIndex = currentIndex + shift;
+    const newCurrentIndex = newIndex > comments.length - 1 ? comments.length : newIndex;
+
+    comments
+      .slice(currentIndex, newCurrentIndex)
+      .forEach((comment) => {
+        const commentElem = renderComment(comment);
+        commentsListFragment.appendChild(commentElem);
+      });
+
+    currentIndex = newCurrentIndex;
+
+    currentCommentsCountElem.textContent = currentIndex;
+    parentNode.appendChild(commentsListFragment);
+  };
+
 };
 
 const renderPopup = ({ url, description, likes, comments }) => {
-  const body = document.querySelector('body');
-  body.classList.add('modal-open');
+  document.querySelector('body').classList.add('modal-open');
 
   const modalElem = document.querySelector('.big-picture');
   modalElem.classList.remove('hidden');
@@ -47,29 +59,23 @@ const renderPopup = ({ url, description, likes, comments }) => {
   modalElem.querySelector('.social__caption').textContent = description;
   modalElem.querySelector('.likes-count').textContent = likes;
 
-  const currentCommentsCountElem = document.querySelector('.comments-current-count');
   document.querySelector('.comments-count').textContent = comments.length;
 
   const commentsListEl = modalElem.querySelector('.social__comments');
   commentsListEl.innerHTML = '';
 
-  let currentIndex = 0;
-  const {
-    commentsListFragment: commentsListItems,
-    currentIndex: currentRenderedCommentsCount,
-  } = renderComments(comments, currentIndex, COMMENTS_COUNT_OFFSET);
-  currentIndex = currentRenderedCommentsCount;
-
-  currentCommentsCountElem.textContent = currentRenderedCommentsCount;
-  commentsListEl.appendChild(commentsListItems);
+  const renderComments = createCommentRenderer(0, COMMENTS_COUNT_SHIFT);
+  renderComments(comments, commentsListEl);
 
   const commentsLoader = modalElem.querySelector('.comments-loader');
   commentsLoader.addEventListener('click', (event) => {
     event.preventDefault();
-    renderComments(comments);
+    renderComments(comments, commentsListEl);
   });
+  // Этот обработчик будет навешиваться заново каждый раз при открытии попапа
+  // Что делать с этим не придумал
+  // Вынести renderComments за пределы renderPopup не получается, т.к. нужно хранить контекст количества комментов для каждого открытия попапа
 
-  // Без once на один элемент закрытия окна будет навешиваться много обработчиков, которые будут срабатывать одновременно
 };
 
 export { renderPopup };
