@@ -1,7 +1,6 @@
 import { renderPopup } from './renderPopup.js';
 
-const renderPhotos = (data) => {
-  const picturesContainer = document.querySelector('.pictures');
+const renderPhotos = (data, parentNode) => {
   const photoTemplate = document
     .querySelector('#picture')
     .content
@@ -9,22 +8,20 @@ const renderPhotos = (data) => {
 
   const photosListFragment = document.createDocumentFragment();
 
-  data.forEach(({ url, description, likes, comments }) => {
+  data.forEach(({ id, url, description, likes, comments }) => {
     const photoEl = photoTemplate.cloneNode(true);
+
     const imgElem = photoEl.querySelector('.picture__img');
     imgElem.src = url;
     imgElem.alt = description;
+    imgElem.dataset.id = id;
     photoEl.querySelector('.picture__comments').textContent = comments.length;
     photoEl.querySelector('.picture__likes').textContent = likes;
-
-    photoEl.addEventListener('click', () => {
-      renderPopup({ url, description, likes, comments });
-    });
 
     photosListFragment.appendChild(photoEl);
   });
 
-  picturesContainer.appendChild(photosListFragment);
+  parentNode.appendChild(photosListFragment);
 };
 
 export { renderPhotos };

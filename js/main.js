@@ -1,5 +1,5 @@
 import { generatePhotosData } from './data.js';
-import { renderPhotos } from './renderPhotos.js';
+import { createGallery } from './gallery.js';
 
 const data = generatePhotosData();
-renderPhotos(data);
+createGallery(data);

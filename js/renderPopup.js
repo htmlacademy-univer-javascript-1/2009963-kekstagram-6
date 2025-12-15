@@ -69,21 +69,6 @@ const renderPopup = ({ url, description, likes, comments }) => {
     renderComments(comments);
   });
 
-  const closeButton = document.querySelector('.big-picture__cancel');
-
-  const closeModal = (event) => {
-    event.preventDefault();
-
-    if (event.type !== 'click' && event.key !== 'Escape') {
-      return;
-    }
-
-    modalElem.classList.add('hidden');
-    body.classList.remove('modal-open');
-  };
-
-  closeButton.addEventListener('click', closeModal, { once: true });
-  document.addEventListener('keydown', closeModal, { once: true });
   // Без once на один элемент закрытия окна будет навешиваться много обработчиков, которые будут срабатывать одновременно
 };
 
