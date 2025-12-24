@@ -27,12 +27,7 @@ const createCommentRenderer = (beginIndex, shift) => {
   return (comments, parentNode, commentsLoader) => {
     const commentsCountElem = document.querySelector('.social__comment-count');
 
-    commentsCountElem.innerHTML = `
-      <span class="comments-current-count">5</span> из <span class="comments-count">7</span> комментариев
-    `;
-
     const currentCommentsCountElem = document.querySelector('.comments-current-count');
-    commentsCountElem.querySelector('.comments-count').textContent = comments.length;
 
     commentsLoader.classList.remove('hidden');
 
@@ -56,8 +51,11 @@ const createCommentRenderer = (beginIndex, shift) => {
 
     currentIndex = newCurrentIndex;
 
-    currentCommentsCountElem.textContent = currentIndex;
     parentNode.appendChild(commentsListFragment);
+
+    commentsCountElem.innerHTML = `
+    ${currentIndex} из <span class="comments-count">${comments.length}</span> комментариев
+  `;
 
     if (currentIndex === comments.length) {
       commentsLoader.classList.add('hidden');

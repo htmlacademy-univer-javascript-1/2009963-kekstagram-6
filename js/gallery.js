@@ -7,7 +7,7 @@ const createGallery = (data) => {
   renderPhotos(data, picturesContainer);
 
   picturesContainer.addEventListener('click', (e) => {
-    if (e.target.hasAttribute('data-id')) {
+    if (e.target.hasAttribute('data-id') && e.target.classList.contains('picture__img')) {
       e.preventDefault();
       const targetId = e.target.dataset.id;
       const targetDataArrIndex = targetId - 1;
