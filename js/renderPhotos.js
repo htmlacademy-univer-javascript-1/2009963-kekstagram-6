@@ -1,5 +1,3 @@
-import { renderPopup } from './renderPopup.js';
-
 const renderPhotos = (data, parentNode) => {
   const photoTemplate = document
     .querySelector('#picture')

@@ -24,8 +24,24 @@ const renderComment = ({ avatar, message, name }) => {
 const createCommentRenderer = (beginIndex, shift) => {
   let currentIndex = beginIndex;
 
-  return (comments, parentNode) => {
+  return (comments, parentNode, commentsLoader) => {
+    const commentsCountElem = document.querySelector('.social__comment-count');
+
+    commentsCountElem.innerHTML = `
+      <span class="comments-current-count">5</span> из <span class="comments-count">7</span> комментариев
+    `;
+
     const currentCommentsCountElem = document.querySelector('.comments-current-count');
+    commentsCountElem.querySelector('.comments-count').textContent = comments.length;
+
+    commentsLoader.classList.remove('hidden');
+
+    if (comments.length === 0) {
+      commentsCountElem.textContent = 'Нет комментариев';
+      commentsLoader.classList.add('hidden');
+      return;
+    }
+
     const commentsListFragment = document.createDocumentFragment();
 
     const newIndex = currentIndex + shift;
@@ -42,15 +58,35 @@ const createCommentRenderer = (beginIndex, shift) => {
 
     currentCommentsCountElem.textContent = currentIndex;
     parentNode.appendChild(commentsListFragment);
+
+    if (currentIndex === comments.length) {
+      commentsLoader.classList.add('hidden');
+    }
   };
 
 };
+
+const closeModal = (event, cb) => {
+  const modalElem = document.querySelector('.big-picture');
+
+  if (event.type !== 'click' && event.key !== 'Escape') {
+    return;
+  }
+  event.preventDefault();
+  modalElem.classList.toggle('hidden');
+  document.querySelector('body').classList.toggle('modal-open');
+
+  event.target.removeEventListener('click', cb);
+};
+
 
 const renderPopup = ({ url, description, likes, comments }) => {
   document.querySelector('body').classList.add('modal-open');
 
   const modalElem = document.querySelector('.big-picture');
   modalElem.classList.remove('hidden');
+
+  const commentsLoader = modalElem.querySelector('.comments-loader');
 
   const imgElem = document.querySelector('.big-picture__img img');
   imgElem.src = url;
@@ -59,23 +95,27 @@ const renderPopup = ({ url, description, likes, comments }) => {
   modalElem.querySelector('.social__caption').textContent = description;
   modalElem.querySelector('.likes-count').textContent = likes;
 
-  document.querySelector('.comments-count').textContent = comments.length;
 
   const commentsListEl = modalElem.querySelector('.social__comments');
   commentsListEl.innerHTML = '';
 
   const renderComments = createCommentRenderer(0, COMMENTS_COUNT_SHIFT);
-  renderComments(comments, commentsListEl);
+  renderComments(comments, commentsListEl, commentsLoader);
 
-  const commentsLoader = modalElem.querySelector('.comments-loader');
-  commentsLoader.addEventListener('click', (event) => {
+  const renderCommentsHandler = (event) => {
     event.preventDefault();
-    renderComments(comments, commentsListEl);
-  });
-  // Этот обработчик будет навешиваться заново каждый раз при открытии попапа
-  // Что делать с этим не придумал
-  // Вынести renderComments за пределы renderPopup не получается, т.к. нужно хранить контекст количества комментов для каждого открытия попапа
+    renderComments(comments, commentsListEl, commentsLoader);
+  };
 
+  const closeModalHandler = (event) => {
+    closeModal(event, closeModalHandler);
+    modalElem.querySelector('.comments-loader').removeEventListener('click', renderCommentsHandler);
+  };
+
+  commentsLoader.addEventListener('click', renderCommentsHandler);
+
+  const closeButton = modalElem.querySelector('.big-picture__cancel');
+  closeButton.addEventListener('click', closeModalHandler);
 };
 
-export { renderPopup };
+export { renderPopup, closeModal };
