@@ -5,12 +5,23 @@ const renderForm = () => {
 
   const closeButton = document.querySelector('.img-upload__cancel');
 
-  const closeModal = () => {
-    // дописать для esc
+  // const closeModal = () => {
+  // дописать для esc
+  // formModal.classList.add('hidden');
+  // body.classList.remove('modal-open');
+  // Сбросить форму через reset видимо
+  // };
+
+  const closeModal = (event) => {
+    if (event.type !== 'click' && event.key !== 'Escape') {
+      return;
+    }
+    event.preventDefault();
     formModal.classList.add('hidden');
-    body.classList.remove('modal-open');
-    // Сбросить форму через reset видимо
-  };
+    document.querySelector('body').classList.remove('modal-open');
+
+    // event.target.removeEventListener('click', closeModal);
+};
 
   input.addEventListener('change', () => {
     formModal.classList.remove('hidden');
@@ -18,6 +29,7 @@ const renderForm = () => {
   });
 
   closeButton.addEventListener('click', closeModal);
+  document.addEventListener('keydown', closeModal);
 };
 
 export { renderForm };

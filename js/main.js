@@ -6,3 +6,4 @@ import { renderForm } from './form.js';
 const data = generatePhotosData();
 createGallery(data);
 
+renderForm();

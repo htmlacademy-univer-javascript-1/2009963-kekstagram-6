@@ -69,8 +69,8 @@ const closeModal = (event, cb) => {
     return;
   }
   event.preventDefault();
-  modalElem.classList.toggle('hidden');
-  document.querySelector('body').classList.toggle('modal-open');
+  modalElem.classList.add('hidden');
+  document.querySelector('body').classList.remove('modal-open');
 
   event.target.removeEventListener('click', cb);
 };
