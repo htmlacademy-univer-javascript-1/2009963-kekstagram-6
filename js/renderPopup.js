@@ -27,8 +27,6 @@ const createCommentRenderer = (beginIndex, shift) => {
   return (comments, parentNode, commentsLoader) => {
     const commentsCountElem = document.querySelector('.social__comment-count');
 
-    const currentCommentsCountElem = document.querySelector('.comments-current-count');
-
     commentsLoader.classList.remove('hidden');
 
     if (comments.length === 0) {
