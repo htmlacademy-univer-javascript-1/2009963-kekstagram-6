@@ -1,3 +1,5 @@
+import { COMMENTS_COUNT_SHIFT } from './constants.js';
+
 const renderComment = ({ avatar, message, name }) => {
   const li = document.createElement('li');
   li.classList.add('social__comment');
@@ -19,58 +21,97 @@ const renderComment = ({ avatar, message, name }) => {
   return li;
 };
 
-const renderComments = (comments) => {
-  const commentsListFragment = document.createDocumentFragment();
+const createCommentRenderer = (beginIndex, shift) => {
+  let currentIndex = beginIndex;
 
-  comments.forEach((comment) => {
-    const commentElem = renderComment(comment);
-    commentsListFragment.appendChild(commentElem);
-  });
+  return (comments, parentNode, commentsLoader) => {
+    const commentsCountElem = document.querySelector('.social__comment-count');
 
-  return commentsListFragment;
+    commentsLoader.classList.remove('hidden');
+
+    if (comments.length === 0) {
+      commentsCountElem.textContent = 'Нет комментариев';
+      commentsLoader.classList.add('hidden');
+      return;
+    }
+
+    const commentsListFragment = document.createDocumentFragment();
+
+    const newIndex = currentIndex + shift;
+    const newCurrentIndex = newIndex > comments.length - 1 ? comments.length : newIndex;
+
+    comments
+      .slice(currentIndex, newCurrentIndex)
+      .forEach((comment) => {
+        const commentElem = renderComment(comment);
+        commentsListFragment.appendChild(commentElem);
+      });
+
+    currentIndex = newCurrentIndex;
+
+    parentNode.appendChild(commentsListFragment);
+
+    commentsCountElem.innerHTML = `
+    ${currentIndex} из <span class="comments-count">${comments.length}</span> комментариев
+  `;
+
+    if (currentIndex === comments.length) {
+      commentsLoader.classList.add('hidden');
+    }
+  };
+
 };
 
-const renderPopup = ({ url, description, likes, comments }) => {
-  const body = document.querySelector('body');
-  body.classList.add('modal-open');
-
+const closeModal = (event, cb) => {
   const modalElem = document.querySelector('.big-picture');
 
+  if (event.type !== 'click' && event.key !== 'Escape') {
+    return;
+  }
+  event.preventDefault();
+  modalElem.classList.toggle('hidden');
+  document.querySelector('body').classList.toggle('modal-open');
+
+  event.target.removeEventListener('click', cb);
+};
+
+
+const renderPopup = ({ url, description, likes, comments }) => {
+  document.querySelector('body').classList.add('modal-open');
+
+  const modalElem = document.querySelector('.big-picture');
   modalElem.classList.remove('hidden');
 
-  modalElem.querySelector('.social__comment-count').classList.toggle('hidden');
-  modalElem.querySelector('.comments-loader').classList.toggle('hidden');
+  const commentsLoader = modalElem.querySelector('.comments-loader');
 
   const imgElem = document.querySelector('.big-picture__img img');
   imgElem.src = url;
   imgElem.alt = description;
 
-  document.querySelector('.social__caption').textContent = description;
+  modalElem.querySelector('.social__caption').textContent = description;
+  modalElem.querySelector('.likes-count').textContent = likes;
 
-  document.querySelector('.likes-count').textContent = likes;
-  document.querySelector('.comments-count').textContent = comments.length;
 
-  const commentsUl = document.querySelector('.social__comments');
-  const commentsItems = renderComments(comments);
+  const commentsListEl = modalElem.querySelector('.social__comments');
+  commentsListEl.innerHTML = '';
 
-  commentsUl.replaceChildren(commentsItems);
+  const renderComments = createCommentRenderer(0, COMMENTS_COUNT_SHIFT);
+  renderComments(comments, commentsListEl, commentsLoader);
 
-  const closeButton = document.querySelector('.big-picture__cancel');
-
-  const closeModal = (event) => {
+  const renderCommentsHandler = (event) => {
     event.preventDefault();
-
-    if (event.type !== 'click' && event.key !== 'Escape') {
-      return;
-    }
-
-    modalElem.classList.add('hidden');
-    body.classList.remove('modal-open');
+    renderComments(comments, commentsListEl, commentsLoader);
   };
 
-  closeButton.addEventListener('click', closeModal, { once: true });
-  document.addEventListener('keydown', closeModal, { once: true });
-  // Без once на один элемент закрытия окна будет навешиваться много обработчиков, которые будут срабатывать одновременно
+  const closeModalHandler = (event) => {
+    closeModal(event, closeModalHandler);
+    modalElem.querySelector('.comments-loader').removeEventListener('click', renderCommentsHandler);
+  };
+
+  commentsLoader.addEventListener('click', renderCommentsHandler);
+
+  const closeButton = modalElem.querySelector('.big-picture__cancel');
+  closeButton.addEventListener('click', closeModalHandler);
 };
 
-export { renderPopup };
+export { renderPopup, closeModal };
