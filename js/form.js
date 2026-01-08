@@ -1,34 +1,25 @@
 import { ERRORS } from './constants.js';
 
 const createFormValidator = (formNode) => {
-  const pristine = new Pristine(formNode, {
-    classTo: 'img-upload__field-wrapper',
-    errorTextParent: 'img-upload__field-wrapper',
-    // errorTextClass: '',
-  });
-
-  // Ошибки
-  // введён невалидный хэш-тег;
-  // превышено количество хэш-тегов;
-  // хэш-теги повторяются.
-
-  // хэш-тег начинается с символа # (решётка);
-  // строка после решётки должна состоять из букв и чисел и не может содержать пробелы, спецсимволы (#, @, $ и т. п.), символы пунктуации (тире, дефис, запятая и т. п.), эмодзи и т. д.;
-  // хеш-тег не может состоять только из одной решётки;
-  // максимальная длина одного хэш-тега 20 символов, включая решётку;
-
-  // хэш-теги нечувствительны к регистру: #ХэшТег и #хэштег считаются одним и тем же тегом;
-  // хэш-теги разделяются пробелами;
-  // один и тот же хэш-тег не может быть использован дважды;
-  // нельзя указать больше пяти хэш-тегов;
-  // хэш-теги необязательны;
-  // если фокус находится в поле ввода хэш-тега, нажатие на Esc не должно приводить к закрытию формы редактирования изображения.
-
+  const pristine = new Pristine(
+    formNode,
+    {
+      classTo: 'img-upload__field-wrapper',
+      errorTextParent: 'img-upload__field-wrapper',
+      errorTextClass: 'form__error',
+    },
+    true
+  );
 
   let currentHashtagErrorCode = '';
   const getErrorMessage = () => ERRORS[currentHashtagErrorCode];
 
   const validateHashtags = (hashtags) => {
+    if (hashtags.length === 0) {
+      currentHashtagErrorCode = '';
+      return true;
+    }
+
     const regExp = /^[a-zA-Zа-яА-ЯёЁ]+$/;
     const hashtagsArr = hashtags.split(' ');
     if (hashtagsArr.length > 5) {
@@ -92,8 +83,9 @@ const renderForm = () => {
   const pristine = createFormValidator(form);
 
   form.addEventListener('submit', (event) => {
-    event.preventDefault();
-    console.log(pristine.validate());
+    if (!pristine.validate()) {
+      event.preventDefault();
+    }
   });
 
 
