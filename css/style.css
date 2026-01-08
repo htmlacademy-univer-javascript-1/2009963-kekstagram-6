@@ -673,7 +673,6 @@ main {
   width: 450px;
 
   margin: 0 auto;
-  margin-bottom: 20px;
   padding: 5px 10px;
 
   font-family: "Open Sans", "Arial", sans-serif;
@@ -688,6 +687,7 @@ main {
   height: 100px;
 
   margin: 0 auto;
+  margin-top: 20px;
   padding: 15px 10px;
 
   font-family: "Open Sans", "Arial", sans-serif;
@@ -695,6 +695,21 @@ main {
   color: #000000;
 
   border-radius: 5px;
+}
+
+.img-upload__field-wrapper {
+  position: relative;
+  width: 450px;
+  margin: 0 auto;
+}
+
+.form__error {
+  width: 450px;
+  margin: 0 auto;
+
+  font-size: 12px;
+  text-align: left;
+  text-transform: none;
 }
 
 
