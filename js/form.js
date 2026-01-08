@@ -6,14 +6,32 @@ const renderForm = () => {
   const closeButton = document.querySelector('.img-upload__cancel');
 
   const pristine = new Pristine(form, {
-    classTo: 'setup-wizard-form__element',
-    errorTextParent: 'setup-wizard-form__element',
-    errorTextClass: 'setup-wizard-form__error-text',
+    classTo: 'img-upload__field-wrapper',
+    errorTextParent: 'img-upload__field-wrapper',
+    // errorTextClass: '',
   });
+
+  const validateHashtags = (hashtags) => (
+    hashtags
+      .split(' ')
+      .every((hashtag) => hashtag[0] === '#')
+  );
+
+  pristine.addValidator(
+    form.querySelector('.text__hashtags'),
+    validateHashtags,
+    'гойда'
+  );
+
+  pristine.addValidator(
+    form.querySelector('.text__description'),
+    (value) => value.length <= 140,
+    'гойда'
+  );
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
-
+    console.log(pristine.validate());
   });
 
   const closeModal = (event) => {
